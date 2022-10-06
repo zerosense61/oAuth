@@ -7,10 +7,10 @@ const myconfig = {
 
 const axios = require('axios')
 const express = require('express')
-const router = express()
+const app = express()
 const port = process.env.PORT || 8080
 
-router.get('/', (req, res) => {
+app.get('/', (req, res) => {
     res.send('Success! You can exit this page and return to discord.')
     console.log(req.query.code)
     try {
@@ -34,7 +34,7 @@ router.get('/', (req, res) => {
     }
 })
 
-router.listen(port, () => {
+app.listen(port, () => {
     console.log(`Started the server on ${port}`)
 })
 
