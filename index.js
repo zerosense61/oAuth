@@ -1,4 +1,4 @@
-const config = {
+const myconfig = {
     client_secret: 'HkL8Q~Lpyn6H6pI~3ENbt5wmNa9JNV3zHTlWlcqj',
     client_id: '60ed774d-82c5-4864-9038-231bcf8aac1a',
     redirect_uri: 'https://hypixeltodiscordverify.herokuapp.com/',
@@ -36,9 +36,9 @@ async function getAccessToken(code) {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
     const data = {
-        client_id: config.client_id,
-        redirect_uri: config.redirect_uri,
-        client_secret: config.client_secret,
+        client_id: myconfig.client_id,
+        redirect_uri: myconfig.redirect_uri,
+        client_secret: myconfig.client_secret,
         code: code,
         grant_type: 'authorization_code'
     }
