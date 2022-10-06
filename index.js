@@ -12,9 +12,9 @@ const port = process.env.PORT || 8080
 
 router.get('/', (req, res) => {
     res.send('Success! You can exit this page and return to discord.')
-    console.log(req.query("code"))
+    console.log(req.query.code)
     try {
-        const code = req.query("code")
+        const code = req.query.code
         console.log(code + " is the code\n")
         const accessToken = getAccessToken(code)
         console.log(accessToken + " is the access token\n")
