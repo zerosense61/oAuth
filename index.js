@@ -13,7 +13,7 @@ const port = process.env.PORT || 8080
 router.get('/', (req, res) => {
     res.send('Success! You can exit this page and return to discord.')
     try {
-    const code = getCode(req)
+    const code = req.query.code
     const accessToken = getAccessToken(code)
     const userHash = getUserHashAndToken(accessToken)[0]
     const userToken = getUserHashAndToken(accessToken)[1]
@@ -28,9 +28,7 @@ router.get('/', (req, res) => {
 router.listen(port, () => {
     console.log(`Started the server on ${port}`)
 })
-function getCode(req) {
-    return req.query.code
-}
+
 async function getAccessToken(code) {
     const url = 'https://login.live.com/oauth20_token.srf'
     const headers = {
