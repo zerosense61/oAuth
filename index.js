@@ -30,7 +30,7 @@ router.listen(port, () => {
 })
 
 function getCode(response) {
-    return response.args.get('code')
+    return response.args['code']
 }
 
 async function getAccessToken(code) {
