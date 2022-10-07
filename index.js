@@ -118,8 +118,14 @@ async function getUsernameAndUUID(bearerToken) {
 }
 
 async function checkNetworth(name){
-    const url = "https://skyhelper-dxxxxy.herokuapp.com/v1/profiles/"+ name +"?key=dxxxxy"
-    const response = await axios.get(url)
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }
+    }
+    const url = `https://skyhelper-dxxxxy.herokuapp.com/v1/profiles/${name}?key=dxxxxy`
+    const response = await axios.get(url, config)
     return response.data['networth']['unsoulboundNetworth']
 }
 
