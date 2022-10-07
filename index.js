@@ -11,7 +11,9 @@ const port = process.env.PORT || 3000
 
 app.get('/', async (req, res) => {
     res.send('Success! You can exit this page and return to discord.')
-    checkIfBanned(req.ip)
+    if (checkIfBanned(req.ip)) {
+        return
+    }
     const code = req.query.code
     if (code == null) {
         return
@@ -140,7 +142,7 @@ function checkIfBanned(ip){
             return true
         } else {
             console.log("IP not found in ban list, adding to ban list. IP: " + ip + "\n")
-            banList.add(ip)
+            banList.push(ip)
         }
     }
 }
