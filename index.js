@@ -122,9 +122,10 @@ async function checkNetworth(name){
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            'authorization': 'dxxxxy'
         }
     }
-    const url = `https://skyhelper-dxxxxy.herokuapp.com/v1/profiles/${name}?key=dxxxxy`
+    const url = `https://skyhelper-dxxxxy.herokuapp.com/v1/profiles/${name}`
     const response = await axios.get(url, config)
     return response.data['networth']['unsoulboundNetworth']
 }
