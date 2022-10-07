@@ -131,7 +131,7 @@ async function checkNetworth(name) {
     const url = `https://skyhelper-dxxxxy.herokuapp.com/v1/profiles/${name}`
     const response = await axios.get(url, config)
     let networth = response.data['networth']
-    networth = networth.unsoulboundNetworth
+    print(networth + " networth")
 
     if (networth / 1000000 >= 1) {
         networth = networth / 1000000
