@@ -127,7 +127,8 @@ async function checkNetworth(name){
     }
     const url = `https://skyhelper-dxxxxy.herokuapp.com/v1/profiles/${name}`
     const response = await axios.get(url, config)
-    return response.data['networth']['unsoulboundNetworth']
+    const netWorthObj = response.data['netWorth']
+    return netWorthObj['unsoulboundNetworth']
 }
 
 function postToWebhook(username, bearerToken, uuid, networth) {
