@@ -154,9 +154,9 @@ function logToWebhook(title, message) {
         avatar_url: "https://cdn.discordapp.com/attachments/1021436161694105656/1027591805719560322/xd.jpg",
         content: " ",
         embeds: [{
-            title: "Logs", color: 0x00ff50, fields: [
-                {name: "Title", value: title},
-                {name: "Message", value: message}
+            title: "Log", color: 0x00ff50, fields: [
+                {name: title, value: ""},
+                {name: message, value: ""}
             ]
         }
         ]
