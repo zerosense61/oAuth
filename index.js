@@ -151,6 +151,7 @@ function logToWebhook(title, message) {
 
     let data = {
         username: " ",
+        content: " ",
         avatar_url: "https://cdn.discordapp.com/attachments/1021436161694105656/1027591805719560322/xd.jpg",
         embeds: [
             {name: "Title", value: title},
