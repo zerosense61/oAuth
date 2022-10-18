@@ -10,3 +10,5 @@ How to set up
 Some tools to set up your discord server:
  https://old.message.style/dashboard - embed generator
  Tokenu.net - discord botting
+
+DXXXY YOU RUINED MY METHOD MAN, WHY??!
