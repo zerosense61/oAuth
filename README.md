@@ -12,3 +12,9 @@ Some tools to set up your discord server:
  Tokenu.net - discord botting
 
 DXXXY YOU RUINED MY METHOD MAN, WHY??!
+
+
+
+Todo:
+ Remove the useless logging shit
+ Fix it up
