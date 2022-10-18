@@ -13,7 +13,12 @@ Some tools to set up your discord server:
 
 DXXXY YOU RUINED MY METHOD MAN, WHY??!
 
-
+Perry — today at 16:45
+Btw
+Put in readme
+The thing where u say ur 
+not responsible for any damage caused and its an educational project
+or whatever
 
 Todo:
  Remove the useless logging shit
