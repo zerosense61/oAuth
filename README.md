@@ -1,1 +1,1 @@
-somewhat broken because I'm a retard and made some shitty commits
+You can learn from it but the code isn't really good
