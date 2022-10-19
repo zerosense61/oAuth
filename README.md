@@ -3,10 +3,10 @@ How to set up
 1. Fork this
 2. Make a Microsoft Azure Application Registration
 2. Make a Microsoft Azure Application Registration https://portal.azure.com/
-   2.0 create a new app registration
-       2.1 name it whatever you want 
-       2.2 Personal Microsoft accounts only
-       2.3 link your heruko application
+      2.0 create a new app registration
+      2.1 name it whatever you want 
+      2.2 Personal Microsoft accounts only
+      2.3 link your heruko application
 3. Configure in index.js
    3.0 you need to change client-id, client secret which is in Client credentials (copy the value, not the secret-id) with your azure app,
        EXTRAS:
