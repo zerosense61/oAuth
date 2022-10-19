@@ -28,5 +28,5 @@ Some tools to set up your discord server:
 Todo:
  1. Remove the useless logging shit
 
-If you're using this please consider donating to my ETH wallet:
+If you're using this, please consider donating to my ETH wallet:
    0xF95DcE4743b4D0d69184f55af30fF6df2D97357a
